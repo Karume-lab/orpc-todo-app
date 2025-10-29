@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { orpcTanstackClient } from "@/utils/orpc";
+import { ORPCTanstackClient } from "@/utils/orpc";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import Link from "next/link";
 
 const TodosPage = () => {
   const queryClient = useQueryClient();
@@ -12,31 +13,31 @@ const TodosPage = () => {
     data: todos,
     isLoading,
     error,
-  } = useQuery(orpcTanstackClient.todo.getAll.queryOptions());
+  } = useQuery(ORPCTanstackClient.todo.getAll.queryOptions());
 
   const addTodo = useMutation({
-    ...orpcTanstackClient.todo.add.mutationOptions(),
+    ...ORPCTanstackClient.todo.add.mutationOptions(),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: orpcTanstackClient.todo.getAll.queryKey() as any,
+        queryKey: ORPCTanstackClient.todo.getAll.queryKey(),
       });
       setText("");
     },
   });
 
   const toggleTodo = useMutation({
-    ...orpcTanstackClient.todo.toggle.mutationOptions(),
+    ...ORPCTanstackClient.todo.toggle.mutationOptions(),
     onSuccess: () =>
       queryClient.invalidateQueries({
-        queryKey: orpcTanstackClient.todo.getAll.queryKey() as any,
+        queryKey: ORPCTanstackClient.todo.getAll.queryKey(),
       }),
   });
 
   const deleteTodo = useMutation({
-    ...orpcTanstackClient.todo.remove.mutationOptions(),
+    ...ORPCTanstackClient.todo.remove.mutationOptions(),
     onSuccess: () =>
       queryClient.invalidateQueries({
-        queryKey: orpcTanstackClient.todo.getAll.queryKey() as any,
+        queryKey: ORPCTanstackClient.todo.getAll.queryKey(),
       }),
   });
 
@@ -57,9 +58,18 @@ const TodosPage = () => {
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 py-16">
       <div className="max-w-xl mx-auto bg-white shadow-lg rounded-2xl p-8 border border-gray-100">
-        <h1 className="text-3xl font-semibold text-gray-800 text-center mb-6">
-          🧩 Todo Manager
-        </h1>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-3xl font-semibold text-gray-800 flex items-center gap-2">
+            🧩 <span>Todo Manager</span>
+          </h1>
+
+          <Link
+            href="/send-email"
+            className="inline-flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-500 hover:underline transition"
+          >
+            Go to Send Email
+          </Link>
+        </div>
 
         <form
           onSubmit={(e) => {

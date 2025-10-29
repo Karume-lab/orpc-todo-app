@@ -3,6 +3,7 @@ import { z } from "zod";
 import { db } from "@/db";
 import { todos } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { sendEmail } from "@/utils/send-email";
 
 export const todoRouter = os.router({
   // Query: get all todos
@@ -47,6 +48,21 @@ export const todoRouter = os.router({
 
 export const router = os.router({
   todo: todoRouter,
+
+  // Send email
+  sendEmail: os
+    .input(
+      z.object({
+        to: z.email(),
+        subject: z.string().min(1),
+        text: z.string().optional(),
+        html: z.string().optional(),
+      })
+    )
+    .handler(async ({ input }) => {
+      await sendEmail(input);
+      return { success: true };
+    }),
 });
 
 export type Router = typeof router;
