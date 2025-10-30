@@ -1,28 +1,29 @@
 "use client";
 
-import { useState } from "react";
-import { ORPCTanstackClient } from "@/utils/orpc";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
+import { useState } from "react";
+import { ORPCTanstackClient } from "@/utils/orpc";
 
 const SendEmailPage = () => {
-  const [to, setTo] = useState("rumzkurama@gmail.com");
-  const [subject, setSubject] = useState("Test");
-  const [message, setMessage] = useState("Hello World from nodemailer");
+  const [to, setTo] = useState("");
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
   const [htmlMode, setHtmlMode] = useState(false);
 
-  const sendEmail = useMutation({
-    ...ORPCTanstackClient.sendEmail.mutationOptions(),
-    onSuccess: () => {
-      alert("✅ Email sent successfully!");
-      setTo("");
-      setSubject("");
-      setMessage("");
-    },
-    onError: (error) => {
-      alert(`❌ Failed to send email: ${(error as Error).message}`);
-    },
-  });
+  const sendEmail = useMutation(
+    ORPCTanstackClient.sendEmail.mutationOptions({
+      onSuccess: () => {
+        alert("✅ Email sent successfully!");
+        setTo("");
+        setSubject("");
+        setMessage("");
+      },
+      onError: (error) => {
+        alert(`❌ Failed to send email: ${(error as Error).message}`);
+      },
+    }),
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

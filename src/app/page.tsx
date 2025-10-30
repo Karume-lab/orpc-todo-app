@@ -1,9 +1,9 @@
 "use client";
 
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Link from "next/link";
 import { useState } from "react";
 import { ORPCTanstackClient } from "@/utils/orpc";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import Link from "next/link";
 
 const TodosPage = () => {
   const queryClient = useQueryClient();
@@ -15,31 +15,34 @@ const TodosPage = () => {
     error,
   } = useQuery(ORPCTanstackClient.todo.getAll.queryOptions());
 
-  const addTodo = useMutation({
-    ...ORPCTanstackClient.todo.add.mutationOptions(),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ORPCTanstackClient.todo.getAll.queryKey(),
-      });
-      setText("");
-    },
-  });
+  const addTodo = useMutation(
+    ORPCTanstackClient.todo.add.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ORPCTanstackClient.todo.getAll.queryKey(),
+        });
+        setText("");
+      },
+    })
+  );
 
-  const toggleTodo = useMutation({
-    ...ORPCTanstackClient.todo.toggle.mutationOptions(),
-    onSuccess: () =>
-      queryClient.invalidateQueries({
-        queryKey: ORPCTanstackClient.todo.getAll.queryKey(),
-      }),
-  });
+  const toggleTodo = useMutation(
+    ORPCTanstackClient.todo.toggle.mutationOptions({
+      onSuccess: () =>
+        queryClient.invalidateQueries({
+          queryKey: ORPCTanstackClient.todo.getAll.queryKey(),
+        }),
+    })
+  );
 
-  const deleteTodo = useMutation({
-    ...ORPCTanstackClient.todo.remove.mutationOptions(),
-    onSuccess: () =>
-      queryClient.invalidateQueries({
-        queryKey: ORPCTanstackClient.todo.getAll.queryKey(),
-      }),
-  });
+  const deleteTodo = useMutation(
+    ORPCTanstackClient.todo.remove.mutationOptions({
+      onSuccess: () =>
+        queryClient.invalidateQueries({
+          queryKey: ORPCTanstackClient.todo.getAll.queryKey(),
+        }),
+    })
+  );
 
   if (isLoading)
     return (
